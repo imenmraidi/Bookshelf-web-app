@@ -1,0 +1,130 @@
+const { OAuth2Client } = require("google-auth-library");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const axios = require("axios");
+const bcrypt = require("bcrypt");
+
+const googleLogin = async (req, res) => {
+  const { token } = req.body;
+  try {
+    //get userInfo
+    const userInfo = await axios
+      .get("https://www.googleapis.com/oauth2/v3/userinfo", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(res => res.data);
+    //upsert User
+    const user = await User.findOneAndUpdate(
+      { email: userInfo.email },
+      { $set: { name: userInfo.name } },
+      { new: true, upsert: true }
+    );
+    // Create tokens
+    const tokens = createTokens(user._id);
+    // Set refresh token in cookies
+    res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
+    res.status(200).json({
+      token: tokens.accessToken,
+      user: { id: user._id, name: user.name },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(401).send({ error });
+  }
+};
+const signup = async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: "User already exists" });
+    }
+    const user = new User({ name, email, password });
+    await user.save();
+
+    // Create tokens
+    const tokens = createTokens(user._id);
+    // Set refresh token in cookies
+    res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
+    res.status(200).json({
+      token: tokens.accessToken,
+      user: { id: user._id, name: user.name },
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server error");
+  }
+};
+const localLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ msg: "Invalid credentials" });
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Invalid credentials" });
+    }
+    // Create tokens
+    const tokens = createTokens(user._id);
+    // Set refresh token in cookies
+    res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
+
+    res.status(200).json({
+      token: tokens.accessToken,
+      user: { id: user._id, name: user.name },
+    });
+  } catch (err) {
+    res.status(500).send("Server error");
+  }
+};
+const refreshToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.status(403).send("Access denied");
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(403).send("Access denied, user not found in DB");
+    } else {
+      const accessToken = jwt.sign(
+        { userId: user._id },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+          expiresIn: "15m",
+        }
+      );
+      res
+        .status(200)
+        .send({ token: accessToken, user: { id: user._id, name: user.name } });
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+const logout = async (req, res) => {
+  res.clearCookie("refreshToken");
+  res.sendStatus(200);
+};
+const createTokens = userId => {
+  const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "7d",
+  });
+  return { accessToken, refreshToken };
+};
+
+module.exports = {
+  googleLogin,
+  localLogin,
+  signup,
+  logout,
+  refreshToken,
+};

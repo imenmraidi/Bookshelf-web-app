@@ -1,0 +1,6 @@
+auth-service/node_modules/
+books-service/node_modules/
+my-react-app/node_modules/
+auth-service/.env
+books-service/.env
+my-react-app/.env
