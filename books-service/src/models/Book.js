@@ -2,21 +2,21 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const bookSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    authors: { type: [String], required: true },
-    description: { type: String, required: true },
-    publishedDate: { type: String, required: true },
-    pageCount: { type: Number, required: true },
-    categories: { type: [String], required: true },
-    cover: { type: String, required: true },
-    startedAt : { type: Date, required: true },
-    finishedAt : { type: Date, required: true },
-    rating : { type: Number , required: true },
-    notes: { type: String, required: true },
-    userId: { type: String, required: true }
+  code: { type: String, required: true },
+  title: { type: String, required: true },
+  authors: { type: [String], required: true },
+  pageCount: { type: Number, required: true },
+  cover: { type: String, required: true },
+  userId: { type: String, required: true },
+  startedAt: { type: Date },
+  finishedAt: { type: Date },
+  rating: { type: Number },
+  notes: { type: String },
+  status: { type: String },
+  shelf: { type: String },
+  tag: { type: String },
 });
 
-
-const Book = mongoose.model("books", bookSchema);
+const Book = mongoose.model("Book", bookSchema);
 
 module.exports = Book;
