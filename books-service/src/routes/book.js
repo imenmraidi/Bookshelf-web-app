@@ -6,9 +6,9 @@ app.use(cookieParser());
 const router = express.Router();
 const Controller = require("../controllers/bookController");
 
-router.get("/get/:userId", auth, Controller.getBooks);
-router.get("/search/:search", auth, Controller.searchBook);
-router.post("/add", auth, Controller.addBook);
+router.get("/search/:search", Controller.searchBook);
+router.get("/get/:userId", Controller.getBooks);
+router.post("/add", Controller.addBook);
 router.post("/delete", Controller.deleteBook);
 router.get("/booksByShelf", Controller.groupBooksByShelf);
 

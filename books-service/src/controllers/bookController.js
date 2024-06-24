@@ -10,18 +10,21 @@ const searchBook = async (req, res) => {
     const books = await axios.get(
       `https://www.googleapis.com/books/v1/volumes?q=${search}`
     );
-    const items = books.items.map(item => {
-      return {
-        code: item.id,
-        title: item.title,
-        authors: item.authors,
-        pageCount: item.pageCount,
-        cover: item.imageLinks.thumbnail,
-      };
-    });
-    res.status(200).json(items);
+    if (!(books.data.totalItems > 0)) res.status(200).json([]);
+    else {
+      const items = books.data.items.map(item => {
+        return {
+          code: item?.id,
+          title: item.volumeInfo?.title,
+          authors: item.volumeInfo?.authors,
+          pageCount: item.volumeInfo?.pageCount,
+          cover: item.volumeInfo?.imageLinks?.thumbnail,
+        };
+      });
+      res.status(200).json(items);
+    }
   } catch (error) {
-    res.status(500).send({ error });
+    res.status(500).send(error.message);
   }
 };
 const getBooks = async (req, res) => {
@@ -39,13 +42,13 @@ const getBooks = async (req, res) => {
   }
 };
 const addBook = async (req, res) => {
-  const { book, shelf, status } = req.body;
+  const { book, shelf, status, userId } = req.body;
   try {
     const existingBook = await Book.findOne({ code: book.code });
     if (existingBook) {
       return res.status(400).json({ error: "Book already exists" });
     }
-    const newBook = new Book({ ...book, shelf, status });
+    const newBook = new Book({ ...book, shelf, status, userId });
     await newBook.save();
 
     res.status(200).json(newBook);
