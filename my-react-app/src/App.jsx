@@ -1,16 +1,16 @@
-import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import { GoogleLogin } from "@react-oauth/google";
-import * as jwt_decode from "jwt-decode";
-import { useGoogleLogin } from "@react-oauth/google";
+import { Routes, Route, Router } from "react-router-dom";
+
 import "./App.css";
+import ProtectedRoute from "./utils/ProtectedRoute";
+import Login from "./pages/Login";
 function App() {
-  const login = useGoogleLogin({
-  onSuccess: tokenResponse => console.log(tokenResponse),
-});
   return (
-    <div className="App">
-      <button onClick={() => login()}>Sign in with Google 🚀</button>
+    <div className="font-roboto-flex">
+      <Routes>
+        {/* <Route path="/login" element={<Login />} /> */}
+        {/* <Route path="/signup" element={<Signup />} /> */}
+        <Route path="/" element={<ProtectedRoute />} />
+      </Routes>
     </div>
   );
 }
