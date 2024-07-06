@@ -4,7 +4,12 @@
 
 @layer components {
   .retro-button {
-    @apply rounded stroke-2 shadow border border-[#3D3D3D];
+    @apply w-full rounded-lg shadow-black-2 active:shadow-none border-black border-2
+    transform active:translate-x-1 active:translate-y-1 transition duration-200;
+  }
+  .input-login {
+    @apply border-2 border-black w-full h-12 max-w-[32rem] p-4 mt-6 transform 
+    focus:outline-none focus:translate-y-1 focus:scale-105 transition duration-200;
   }
 }
 

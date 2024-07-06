@@ -35,11 +35,12 @@ export const localLogin = createAsyncThunk(
 export const googleLogin = createAsyncThunk(
   "user/googleLogin",
   async (data, thunkAPI) => {
+    console.log(data);
     const { rejectWithValue } = thunkAPI;
     try {
       const response = await axios.post(
         "http://localhost:3001/api/auth/google",
-        data,
+        { token: data.access_token },
         {
           withCredentials: true,
           credentials: "include",
@@ -113,6 +114,7 @@ const authSlice = createSlice({
       })
       .addCase(localLogin.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.isAuthenticated = true;
         state.loading = false;
       })
       .addCase(localLogin.rejected, state => {
@@ -123,6 +125,7 @@ const authSlice = createSlice({
       })
       .addCase(googleLogin.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.isAuthenticated = true;
         state.loading = false;
       })
       .addCase(googleLogin.rejected, state => {
