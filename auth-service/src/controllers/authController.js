@@ -38,7 +38,7 @@ const signup = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ msg: "User already exists" });
+      return res.status(400).send("User already exists");
     }
     const user = new User({ name, email, password });
     await user.save();
@@ -62,12 +62,14 @@ const localLogin = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).send("User not found");
     }
-
+    if (!user.password) {
+      return res.status(400).send("Account not found");
+    }
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).send("Invalid Password");
     }
     // Create tokens
     const tokens = createTokens(user._id);
@@ -79,6 +81,7 @@ const localLogin = async (req, res) => {
       user: { id: user._id, name: user.name },
     });
   } catch (err) {
+    console.log(err);
     res.status(500).send("Server error");
   }
 };
