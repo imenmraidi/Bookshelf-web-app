@@ -9,6 +9,7 @@ function Landing({ component }) {
   useEffect(() => {
     if (isAuthenticated) navigate("/", { replace: true });
   }, [navigate]);
+
   return (
     <div className="bg-bg-1 m-0 p-10 min-h-screen w-screen flex flex-col">
       <Header />
