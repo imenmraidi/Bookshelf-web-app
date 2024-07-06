@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Home from "../pages/Home";
 import Landing from "../pages/Landing";
@@ -7,7 +7,7 @@ import Landing from "../pages/Landing";
 function ProtectedRoute() {
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 
-  return isAuthenticated ? <Home /> : <Landing />;
+  return isAuthenticated ? <Home /> : <Outlet />;
 }
 
 export default ProtectedRoute;

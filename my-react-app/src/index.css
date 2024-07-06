@@ -4,7 +4,8 @@
 
 @layer components {
   .retro-button {
-    @apply rounded stroke-2 shadow border border-[#3D3D3D];
+    @apply w-full rounded-lg shadow-black-2 active:shadow-none border-black border-2
+    transform active:translate-x-1 active:translate-y-1 transition duration-200;
   }
 }
 
