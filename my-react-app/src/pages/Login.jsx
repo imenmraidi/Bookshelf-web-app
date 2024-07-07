@@ -58,12 +58,12 @@ function Login() {
   });
   return (
     <div
-      className="rounded-tr-3xl rounded-bl-3xl rounded-br-3xl
+      className="rounded-tr-3xl rounded-bl-3xl rounded-br-3xl 
              bg-[#FFD787] border-2 border-black shadow-black-2
              p-10 text-lg ml-20 flex flex-col items-center justify-center "
     >
       <h1 className="text-3xl mb-2">Login</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col ">
         <input
           placeholder="Email"
           type="text"

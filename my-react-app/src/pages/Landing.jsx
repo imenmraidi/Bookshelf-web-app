@@ -11,7 +11,7 @@ function Landing({ component }) {
   }, [navigate]);
 
   return (
-    <div className="bg-bg-1 m-0 p-10 min-h-screen w-screen flex flex-col">
+    <div className="bg-bg-1 m-0 p-6 min-h-screen w-screen flex flex-col">
       <Header />
       <div className="flex flex-col mt-10 md:flex-row">
         <div className="w-1/3 flex flex-col m-6">

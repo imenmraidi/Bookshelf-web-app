@@ -35,7 +35,6 @@ export const localLogin = createAsyncThunk(
 export const googleLogin = createAsyncThunk(
   "user/googleLogin",
   async (data, thunkAPI) => {
-    console.log(data);
     const { rejectWithValue } = thunkAPI;
     try {
       const response = await axios.post(
@@ -74,8 +73,8 @@ export const logout = createAsyncThunk(
     }
   }
 );
-export const signUp = createAsyncThunk(
-  "user/signUp",
+export const signup = createAsyncThunk(
+  "user/signup",
   async (data, thunkAPI) => {
     const { rejectWithValue } = thunkAPI;
     try {
@@ -90,15 +89,7 @@ export const signUp = createAsyncThunk(
 
       return user;
     } catch (error) {
-      if (error.response) return rejectWithValue(error.response.data.message);
-      else if (error.request)
-        return rejectWithValue(
-          "Une erreur s'est produite, essayez ultérieurement"
-        );
-      else
-        return rejectWithValue(
-          "Une erreur s'est produite, essayez ultérieurement"
-        );
+      return rejectWithValue({ response: error.response });
     }
   }
 );
@@ -140,13 +131,15 @@ const authSlice = createSlice({
       .addCase(logout.rejected, state => {
         state.loading = false;
       })
-      .addCase(signUp.pending, state => {
+      .addCase(signup.pending, state => {
         state.loading = true;
       })
-      .addCase(signUp.fulfilled, state => {
+      .addCase(signup.fulfilled, state => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
         state.loading = false;
       })
-      .addCase(signUp.rejected, state => {
+      .addCase(signup.rejected, state => {
         state.loading = false;
       });
   },

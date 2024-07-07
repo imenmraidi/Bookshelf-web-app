@@ -51,9 +51,9 @@ const signup = async (req, res) => {
       token: tokens.accessToken,
       user: { id: user._id, name: user.name },
     });
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Server error");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error });
   }
 };
 const localLogin = async (req, res) => {
