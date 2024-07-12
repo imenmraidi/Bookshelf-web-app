@@ -5,10 +5,8 @@ import Home from "../pages/Home";
 import Landing from "../pages/Landing";
 
 function ProtectedRoute() {
-  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-  console.log(isAuthenticated);
-
-  return isAuthenticated ? <Home /> : <Navigate to="/login" />;
+  const user = useSelector(state => state.auth.user);
+  return user ? <Home /> : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;

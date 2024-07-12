@@ -57,8 +57,12 @@ const addBook = async (req, res) => {
   }
 };
 const groupBooksByShelf = async (req, res) => {
+  const { status, userId } = req.body;
   try {
     const groupedBooks = await Book.aggregate([
+      {
+        $match: { status,userId },
+      },
       {
         $group: {
           _id: "$shelf",
@@ -66,6 +70,7 @@ const groupBooksByShelf = async (req, res) => {
         },
       },
     ]);
+    console.log(groupedBooks);
     res.status(200).json(groupedBooks);
   } catch (error) {
     res.status(500).send({ error });

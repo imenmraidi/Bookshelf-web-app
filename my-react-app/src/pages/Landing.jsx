@@ -5,29 +5,27 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 function Landing({ component }) {
   const navigate = useNavigate();
-  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const user = useSelector(state => state.auth.user);
   useEffect(() => {
-    if (isAuthenticated) navigate("/", { replace: true });
-  }, [navigate]);
+    if (user) navigate("/", { replace: true });
+  }, []);
 
   return (
-    <div className="bg-bg-1 m-0 p-6 min-h-screen w-screen flex flex-col">
+    <div className="bg-bg-1 m-0 p-8 min-h-screen w-screen flex flex-col">
       <Header />
-      <div className="flex flex-col mt-10 md:flex-row">
-        <div className="w-1/3 flex flex-col m-6">
+      <div className="flex flex-col mt-10 md:flex-row justify-between">
+        <div className="sm:w-full md:w-full lg:w-1/2 xl:w-1/2 flex flex-col">
           <h1 className="text-4xl ml-2">Bookshelf</h1>
-          <div
-            className="rounded-tl-3xl rounded-bl-3xl rounded-br-3xl
-             bg-bg-2 border-2 border-black shadow-black--2 mt-6 p-6 text-lg
-          "
-          >
+          <div className="rounded-tl-3xl rounded-bl-3xl rounded-br-3xl bg-bg-2 border-2 border-black shadow-black--2 mt-6 p-6 text-lg">
             <p>
-              Welcome to Bookshelf ! your virtual library where you can organize
-              you books in a very interactive and funny way !
+              Welcome to Bookshelf! Your virtual library where you can organize
+              your books in a very interactive and fun way!
             </p>
           </div>
         </div>
-        <div className="w-2/3 ml-20 mt-6 mr-10">{component}</div>
+        <div className=" sm:w-full md:w-full lg:w-1/2 xl:w-1/2 mt-6   ">
+          {component}
+        </div>
       </div>
     </div>
   );

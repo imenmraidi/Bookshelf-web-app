@@ -22,7 +22,7 @@ const googleLogin = async (req, res) => {
     // Create tokens
     const tokens = createTokens(user._id);
     // Set refresh token in cookies
-    res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
+    res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true });
     res.status(200).json({
       token: tokens.accessToken,
       user: { id: user._id, name: user.name },
@@ -46,7 +46,7 @@ const signup = async (req, res) => {
     // Create tokens
     const tokens = createTokens(user._id);
     // Set refresh token in cookies
-    res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
+    res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true });
     res.status(200).json({
       token: tokens.accessToken,
       user: { id: user._id, name: user.name },
@@ -74,7 +74,7 @@ const localLogin = async (req, res) => {
     // Create tokens
     const tokens = createTokens(user._id);
     // Set refresh token in cookies
-    res.cookie("refresh_token", tokens.refreshToken, { httpOnly: true });
+    res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true });
 
     res.status(200).json({
       token: tokens.accessToken,
@@ -91,7 +91,7 @@ const refreshToken = async (req, res) => {
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.userId);
     if (!user) {
       return res.status(403).send("Access denied, user not found in DB");
     } else {
@@ -107,6 +107,9 @@ const refreshToken = async (req, res) => {
         .send({ token: accessToken, user: { id: user._id, name: user.name } });
     }
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(403).send("Access denied, token expired");
+    }
     res.status(500).send({ error: error.message });
   }
 };

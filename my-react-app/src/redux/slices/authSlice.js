@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosAuth from "../../utils/axiosConfig";
+import axiosAuth from "../../utils/useAxios";
 import axios from "axios";
 
 const currentuser = JSON.parse(localStorage.getItem("user"));
@@ -28,7 +28,7 @@ export const localLogin = createAsyncThunk(
 
       return user;
     } catch (error) {
-      return rejectWithValue({ response: error.response });
+      return rejectWithValue({ response: error });
     }
   }
 );
@@ -52,7 +52,7 @@ export const googleLogin = createAsyncThunk(
 
       return user;
     } catch (error) {
-      return rejectWithValue({ response: error.response });
+      return rejectWithValue({ response: error });
     }
   }
 );
@@ -89,7 +89,7 @@ export const signup = createAsyncThunk(
 
       return user;
     } catch (error) {
-      return rejectWithValue({ response: error.response });
+      return rejectWithValue({ response: error });
     }
   }
 );

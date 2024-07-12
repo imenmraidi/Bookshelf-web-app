@@ -22,9 +22,9 @@ function Login() {
     if (localLogin.rejected.match(action)) {
       console.log(action.payload);
       toast.error(
-        action.payload.response.status === 500
+        action.payload.response.cide === "ERR_NETWORK"
           ? "une erreur s'est prosuite essayez ultérieurement"
-          : action.payload.response.data,
+          : action.payload.response.message,
         {
           position: "top-right",
         }
@@ -42,9 +42,9 @@ function Login() {
       if (googleLogin.rejected.match(action)) {
         console.log(action.payload);
         toast.error(
-          action.payload.response.status === 500
+          action.payload.response.cide === "ERR_NETWORK"
             ? "une erreur s'est prosuite essayez ultérieurement"
-            : action.payload.response.data,
+            : action.payload.response.message,
           {
             position: "top-right",
           }
@@ -60,7 +60,7 @@ function Login() {
     <div
       className="rounded-tr-3xl rounded-bl-3xl rounded-br-3xl 
              bg-[#FFD787] border-2 border-black shadow-black-2
-             p-10 text-lg ml-20 flex flex-col items-center justify-center "
+             p-10 text-lg ml-20 flex flex-col items-center justify-center w-auto"
     >
       <h1 className="text-3xl mb-2">Login</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col ">
@@ -106,8 +106,9 @@ function Login() {
         </Link>
       </h3>
       <button
-        className=" bg-[#FFEAB9]  w-1/2 shadow-orange-6 p-2 border-2 border-black h-12 transform 
-        active:shadow-orange-2 active:translate-y-1 active:translate-x-1 transition duration-200 mt-6
+        className=" bg-[#FFEAB9]  w-1/2 sm:w-64 md:w-80 lg:w-96 xl:w-1/2 shadow-purple-4 p-2 border-2 border-black h-12 transform 
+        active:shadow-purple-2 active:translate-y-1 active:translate-x-1 transition duration-200 mt-6
+        flex items-center justify-center
         "
         onClick={() => {
           googleLog();
@@ -118,8 +119,8 @@ function Login() {
             src="https://cdn.lordicon.com/gkryirhd.json"
             trigger="loop"
             state="loop-snake-alt"
-            class="size-8 ml-4"
-            colors="primary:#ffffff"
+            class="size-7 mr-4"
+            colors="primary:#00000"
           ></lord-icon>
         )}
         Continue in with Google 🚀

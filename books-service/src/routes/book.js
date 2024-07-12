@@ -10,6 +10,6 @@ router.get("/search/:search", Controller.searchBook);
 router.get("/get/:userId", Controller.getBooks);
 router.post("/add", Controller.addBook);
 router.post("/delete", Controller.deleteBook);
-router.get("/booksByShelf", Controller.groupBooksByShelf);
+router.post("/booksByShelf", auth, Controller.groupBooksByShelf);
 
 module.exports = router;

@@ -5,6 +5,7 @@ export default {
   theme: {
     extend: {
       boxShadow: {
+        "grey-1": "1px 1px 0 0 #3D3D3D",
         "grey-2": "2px 2px 0 0 #3D3D3D",
         "grey-4": "4px 4px 0 0 #3D3D3D",
         "grey-6": "6px 6px 0 0 #3D3D3D",
@@ -27,6 +28,10 @@ export default {
         "burgendy-4": "4px 4px 0 0 #773439",
         "burgendy-6": "6px 6px 0 0 #773439",
         "burgendy-8": "8px 8px 0 0 #773439",
+        "purple-2": "2px 2px 0 0 #C73371",
+        "purple-4": "4px 4px 0 0 #C73371",
+        "purple-6": "6px 6px 0 0 #C73371",
+        "purple-8": "8px 8px 0 0 #C73371",
       },
       fontFamily: {
         "roboto-flex": ["Roboto Flex", "sans-serif"],

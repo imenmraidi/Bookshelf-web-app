@@ -45,9 +45,9 @@ function Signup() {
       if (googleLogin.rejected.match(action)) {
         console.log(action.payload);
         toast.error(
-          action.payload.response.status === 500
+          action.payload.response.cide === "ERR_NETWORK"
             ? "une erreur s'est prosuite essayez ultérieurement"
-            : action.payload.response.data,
+            : action.payload.response.message,
           {
             position: "top-right",
           }
@@ -109,22 +109,23 @@ function Signup() {
       border-2 w-full h-12 max-w-[32rem] transform flex items-center justify-center
       active:shadow-grey-2 active:translate-y-1 active:translate-x-1 transition duration-200"
         >
-          Continue
           {loading && (
             <lord-icon
               src="https://cdn.lordicon.com/gkryirhd.json"
               trigger="loop"
               state="loop-snake-alt"
-              class="size-8 ml-4"
+              class="size-8 mr-2"
               colors="primary:#ffffff"
             ></lord-icon>
           )}
+          Continue
         </button>
       </form>
 
       <button
-        className=" bg-[#FFEAB9]  w-1/2 shadow-orange-6 p-2 border-2 border-black h-12 transform 
-        active:shadow-orange-2 active:translate-y-1 active:translate-x-1 transition duration-200 mt-8
+        className=" bg-[#FFEAB9]  w-1/2 shadow-purple-4 p-2 border-2 border-black h-12 transform 
+        active:shadow-purple-2 active:translate-y-1 active:translate-x-1 transition duration-200 mt-8
+        flex items-center justify-center
         "
         onClick={() => {
           googleLog();
@@ -135,8 +136,8 @@ function Signup() {
             src="https://cdn.lordicon.com/gkryirhd.json"
             trigger="loop"
             state="loop-snake-alt"
-            class="size-8 ml-4"
-            colors="primary:#ffffff"
+            class="size-7 mr-2"
+            colors="primary:#00000"
           ></lord-icon>
         )}
         Continue in with Google 🚀
