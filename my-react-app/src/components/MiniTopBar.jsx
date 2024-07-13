@@ -1,51 +1,51 @@
 import React from "react";
-function MiniTopBar() {
+function MiniTopBar({ openAddBookModal, shelves }) {
   return (
-    <div className="flex space-x-3 h-10 justify-between pl-2 pr-2">
+    <div className="flex  h-9 justify-between pl-6 pr-6">
       <h1 className="flex items-center text-3xl italic">My read list</h1>
-      <div className="flex space-x-4">
-        <div className="flex bg-white rounded-lg pr-1 pl-1 border-2
-         border-[#3D3D3D] shadow-grey-2 items-center">
+      <div className="flex space-x-3">
+        <div
+          className="flex bg-[#FEF9EF] rounded-lg pr-1 pl-1 border-2
+         border-[#3D3D3D] shadow-grey-2 items-center"
+        >
           <lord-icon
             src="https://cdn.lordicon.com/kkvxgpti.json"
             trigger="hover"
-            class=""
+            class="size-7"
           ></lord-icon>
-          <input type="text" className="outline-none p-1" />
+          <input type="text" className="outline-none bg-inherit p-1" />
         </div>
         <select
           className="flex bg-[#FDA79A] rounded-lg pr-1 pl-1 border-2
          border-[#3D3D3D] shadow-grey-2 outline-none"
         >
-          <option value="">Shelves</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
+          {shelves.map(s => (
+            <option key={s}>{s}</option>
+          ))}
         </select>
 
         <button
           className="bg-[#FFD787] rounded-lg border-2
-         border-[#3D3D3D] shadow-grey-2 flex justify-center items-center p-1"
+         border-[#3D3D3D] shadow-grey-2 flex justify-center items-center p-1
+          active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transform transition duration-200"
         >
           <lord-icon
             src="https://cdn.lordicon.com/eouimtlu.json"
             trigger="morph"
-            class=""
+            class="size-7"
           ></lord-icon>
         </button>
         <button
           className="bg-[#BEF0CD] rounded-lg border-2
         border-[#3D3D3D] shadow-grey-2 flex justify-center items-center p-1
-        animate-bounce 
-        "
+        active:shadow-none active:translate-y-0.5 active:translate-x-0.5 transform transition duration-200"
+          onClick={openAddBookModal}
         >
           <lord-icon
             src="https://cdn.lordicon.com/zyzoecaw.json"
             trigger="morph"
             state="morph-book"
-            class=""
+            class="size-7"
           ></lord-icon>
         </button>
       </div>

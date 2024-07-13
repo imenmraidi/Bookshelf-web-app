@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  console.log("req.headers:", req.headers);
   if (!token) {
     return res.status(401).json({ message: "Unauthorized no token" });
   }
@@ -12,7 +11,6 @@ verifyToken = (req, res, next) => {
     req.user = decodedToken;
     return next();
   } catch (error) {
-    console.log("errortoken", error);
     return res.status(401).json({ message: "Unauthorized token not verified" });
   }
 };

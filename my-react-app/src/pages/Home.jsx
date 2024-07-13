@@ -4,7 +4,7 @@ import Container from "./Container";
 
 function Home() {
   return (
-    <div className="bg-bg-2 m-0 p-6 h-screen w-screen flex flex-col">
+    <div className="bg-bg-2 m-0 p-6 h-screen w-screen flex flex-col overflow-auto">
       <TopBar />
       <Container />
     </div>

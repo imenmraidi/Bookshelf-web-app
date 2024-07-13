@@ -3,11 +3,13 @@ import MiniTopBar from "./MiniTopBar";
 import Library from "./Library";
 import useAxios from "../utils/useAxios";
 import { useSelector } from "react-redux";
+import AddBooksModal from "../comm/AddBooksModal";
 function Read() {
   const [booksByShelf, setBooksByShelf] = useState([]);
   const [shelves, setShelves] = useState([]);
   const [search, setSearch] = useState("");
   const { user } = useSelector(state => state.auth);
+  const [addBookModal, setAddBookModal] = useState(false);
   const api = useAxios();
 
   const fetchData = async () => {
@@ -28,11 +30,21 @@ function Read() {
   }, []);
   return (
     <div
-      className="w-full h-full overflow-auto md:w-1/2 flex flex-col flex-grow 
-     space-y-4 p-4  "
+      className=" w-1/2 flex flex-col h-full 
+     space-y-4 p-2 overflow-auto"
     >
-      <MiniTopBar />
+      <MiniTopBar
+        shelves={shelves}
+        booksByShelf={booksByShelf}
+        setBooksByShelf={setBooksByShelf}
+        openAddBookModal={() => setAddBookModal(true)}
+      />
       <Library booksByShelf={booksByShelf} setBooksByShelf={setBooksByShelf} />
+      <AddBooksModal
+        isOpen={addBookModal}
+        setOpen={setAddBookModal}
+        setBooksByShelf={setBooksByShelf}
+      />
     </div>
   );
 }

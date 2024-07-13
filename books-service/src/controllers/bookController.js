@@ -19,6 +19,7 @@ const searchBook = async (req, res) => {
           authors: item.volumeInfo?.authors,
           pageCount: item.volumeInfo?.pageCount,
           cover: item.volumeInfo?.imageLinks?.thumbnail,
+          publishedDate: item.volumeInfo?.publishedDate,
         };
       });
       res.status(200).json(items);
@@ -61,7 +62,7 @@ const groupBooksByShelf = async (req, res) => {
   try {
     const groupedBooks = await Book.aggregate([
       {
-        $match: { status,userId },
+        $match: { status, userId },
       },
       {
         $group: {
@@ -70,7 +71,6 @@ const groupBooksByShelf = async (req, res) => {
         },
       },
     ]);
-    console.log(groupedBooks);
     res.status(200).json(groupedBooks);
   } catch (error) {
     res.status(500).send({ error });
