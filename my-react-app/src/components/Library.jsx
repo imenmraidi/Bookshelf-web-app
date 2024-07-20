@@ -5,8 +5,8 @@ function Library({ booksByShelf, setBooksByShelf }) {
     <div className="flex flex-grow p-2 overflow-auto">
       <div className="bg-[#BF785E] w-4 rounded-md border-2 border-black shadow-black-2"></div>
       <div className=" flex flex-grow flex-col w-full h-full overflow-y-auto scroll-smooth scrollbar-none pb-4 ">
-        {booksByShelf.map(s => (
-          <Shelf shelf={s} key={s._id}/>
+        {booksByShelf && booksByShelf.map(s => (
+          <Shelf shelf={s} key={s.shelf}/>
         ))}
       
       </div>

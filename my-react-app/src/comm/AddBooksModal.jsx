@@ -5,7 +5,6 @@ import { debounce } from "lodash";
 const AddBooksModal = ({ isOpen, setOpen, setBooksByShelf }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState([]);
   const api = useAxios();
 
@@ -18,14 +17,10 @@ const AddBooksModal = ({ isOpen, setOpen, setBooksByShelf }) => {
           );
           console.log(response.data);
           setResults(response.data);
-          setIsDropdownVisible(true);
         } catch (error) {
           console.error("Error fetching search results:", error);
           setResults([]);
-          setIsDropdownVisible(false);
         }
-      } else {
-        setIsDropdownVisible(false);
       }
     }, 300);
     fetchResults();
@@ -72,25 +67,34 @@ const AddBooksModal = ({ isOpen, setOpen, setBooksByShelf }) => {
             value={query}
             onChange={e => setQuery(e.target.value)}
           />
-          {isDropdownVisible && results.length > 0 && (
+          {query && (
             <div className=" w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg overflow-y-auto h-48">
               <ul>
-                {results.map((result, index) => (
+                {results.length > 0 ? (
+                  results.map((result, index) => (
+                    <li
+                      key={index}
+                      className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={() => {
+                        setSelectedBooks(prevState => [...prevState, result]);
+                        setQuery("");
+                      }}
+                    >
+                      {result.title}
+                    </li>
+                  ))
+                ) : (
                   <li
-                    key={index}
+                   
                     className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                    onClick={() => {
-                      setSelectedBooks(prevState => [...prevState, result]);
-                      setIsDropdownVisible(false);
-                    }}
                   >
-                    {result.title}
+                    No books found
                   </li>
-                ))}
+                )}
               </ul>
             </div>
           )}
-          {!isDropdownVisible && selectedBooks.map(b => <div>{b.title}</div>)}
+          {!query && selectedBooks.map(b => <div>{b.title}</div>)}
         </div>
         <div className="flex justify-end ">
           <button

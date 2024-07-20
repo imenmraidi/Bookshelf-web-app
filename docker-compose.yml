@@ -1,0 +1,44 @@
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=mongodb://127.0.0.1:27017/userdb
+    depends_on:
+      - auth-db
+
+  books-service:
+    build: ./books-service
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=mongodb://127.0.0.1:27017/bookdb
+    depends_on:
+      - books-db
+
+  my-react-app:
+    build: ./my-react-app
+    ports:
+      - "5173:5173"
+    environment:
+      - REACT_APP_AUTH_API_URL=http://auth-service:3001
+      - REACT_APP_BOOKS_API_URL=http://books-service:3002
+
+  auth-db:
+    image: mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - auth-db-data:/data/db
+
+  books-db:
+    image: mongo
+    ports:
+      - "27019:27017"
+    volumes:
+      - books-db-data:/data/db
+
+volumes:
+  auth-db-data:
+  books-db-data:
