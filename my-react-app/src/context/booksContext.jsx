@@ -10,6 +10,7 @@ export const useBooks = () => {
 export default BooksContext;
 
 export const BooksProvider = ({ children }) => {
+  const [books, setBooks] = useState([]);
   const [readBooks, setReadBooks] = useState([]);
   const [currentlyReadingBooks, setCurrentlyReadingBooks] = useState([]);
   const [toReadBooks, setToReadBooks] = useState([]);
@@ -24,6 +25,7 @@ export const BooksProvider = ({ children }) => {
         { userId: user.id, status: "R" }
       );
       console.log("res", response.data);
+      setBooks(response.data);
       setReadBooks(response.data.find(r => r.status === "R")?.shelves || []);
       setCurrentlyReadingBooks(
         response.data.find(r => r.status === "C")?.shelves || []
@@ -41,6 +43,8 @@ export const BooksProvider = ({ children }) => {
   return (
     <BooksContext.Provider
       value={{
+        books,
+        setBooks,
         readBooks,
         setReadBooks,
         currentlyReadingBooks,

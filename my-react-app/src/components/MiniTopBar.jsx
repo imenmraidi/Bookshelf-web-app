@@ -1,5 +1,12 @@
 import React from "react";
-function MiniTopBar({ openAddBookModal, shelves }) {
+function MiniTopBar({
+  openAddBookModal,
+  shelves,
+  search,
+  setSearch,
+  selectedShelf,
+  setSelectedShelf,
+}) {
   return (
     <div className="flex  h-9 justify-between pl-6 pr-6">
       <h1 className="flex items-center text-3xl italic">My read list</h1>
@@ -7,21 +14,34 @@ function MiniTopBar({ openAddBookModal, shelves }) {
         <div
           className="flex bg-[#FEF9EF] rounded-lg pr-1 pl-1 border-2
          border-[#3D3D3D] shadow-grey-2 items-center"
-        >         
+        >
           <lord-icon
             src="https://cdn.lordicon.com/kkvxgpti.json"
             trigger="hover"
             class="size-7"
           ></lord-icon>
-          <input type="text" className="outline-none bg-inherit p-1" />
+          <input
+            type="text"
+            className="outline-none bg-inherit p-1"
+            value={search}
+            onChange={e => setSearch(e.target.value.toLowerCase())}
+          />
         </div>
         <select
+          value={selectedShelf}
+          onChange={event => {
+            setSelectedShelf(event.target.value);
+          }}
           className="flex bg-[#FDA79A] rounded-lg pr-1 pl-1 border-2
          border-[#3D3D3D] shadow-grey-2 outline-none"
         >
-          {shelves && shelves.map(s => (
-            <option key={s}>{s}</option>
-          ))}
+          <option value="">shelves</option>
+          {shelves &&
+            shelves.map(shelf => (
+              <option key={shelf} value={shelf}>
+                {shelf}
+              </option>
+            ))}
         </select>
 
         <button

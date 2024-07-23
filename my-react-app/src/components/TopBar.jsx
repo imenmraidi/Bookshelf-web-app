@@ -21,7 +21,7 @@ function TopBar({ addBook }) {
         +200
       </div>
       <button
-        className="bg-[#BEF0CD] rounded-md border-2
+        className="bg-[#A4D985] rounded-md border-2
         border-[#3D3D3D] shadow-grey-2 flex justify-center items-center p-1
         active:shadow-none active:translate-y-0.5 active:translate-x-0.5 transform transition duration-200"
         onClick={addBook}

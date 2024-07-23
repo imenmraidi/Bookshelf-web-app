@@ -4,30 +4,54 @@ import Library from "./Library";
 import useAxios from "../utils/useAxios";
 import { useSelector } from "react-redux";
 import AddBooksModal from "../comm/AddBooksModal";
-function Read({ books }) {
-  const [booksByShelf, setBooksByShelf] = useState([]);
-  const [shelves, setShelves] = useState([]);
+import { useBooks } from "../context/booksContext";
+function Read() {
+  const { readBooks } = useBooks();
   const [search, setSearch] = useState("");
-  const { user } = useSelector(state => state.auth);
-  const [addBookModal, setAddBookModal] = useState(false);
-  const api = useAxios();
+  const [selectedShelf, setSelectedShelf] = useState("");
+  console.log(selectedShelf);
+  console.log(
+    readBooks.filter(item => {
+      return item.shelf.includes("fav");
+    })
+  );
 
-  useEffect(() => {
-    setBooksByShelf(books);
-    setShelves(books?.map(b => b.shelf));
-  }, [books]);
   return (
     <div
       className=" w-1/2 flex flex-col h-full 
      space-y-4 p-2 overflow-auto"
     >
       <MiniTopBar
-        shelves={shelves}
-        booksByShelf={booksByShelf}
-        setBooksByShelf={setBooksByShelf}
-        openAddBookModal={() => setAddBookModal(true)}
+        shelves={readBooks.map(b => b.shelf)}
+        search={search}
+        setSearch={setSearch}
+        selectedShelf={selectedShelf}
+        setSelectedShelf={setSelectedShelf}
       />
-      <Library booksByShelf={booksByShelf} setBooksByShelf={setBooksByShelf} />
+      {search ? (
+        <Library
+          booksByShelf={readBooks.filter(item => {
+            return (
+              item.shelf.toLowerCase().includes(search) ||
+              item.books.some(
+                book =>
+                  book.title.toLowerCase().includes(search) ||
+                  book.authors.some(author =>
+                    author.toLowerCase().includes(search)
+                  )
+              )
+            );
+          })}
+        />
+      ) : selectedShelf ? (
+        <Library
+          booksByShelf={readBooks.filter(item => {
+            return item.shelf.includes(selectedShelf);
+          })}
+        />
+      ) : (
+        <Library booksByShelf={readBooks} />
+      )}
     </div>
   );
 }
