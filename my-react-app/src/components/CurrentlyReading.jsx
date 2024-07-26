@@ -5,17 +5,17 @@ import useAxios from "../utils/useAxios";
 import { useSelector } from "react-redux";
 import AddBooksModal from "../comm/AddBooksModal";
 import { useBooks } from "../context/booksContext";
-function Read() {
-  const { readBooks } = useBooks();
+function CurrentlyReading() {
+  const { currentlyReadingBooks } = useBooks();
 
   return (
     <div
-      className=" w-1/2 flex flex-col h-full 
-     space-y-4 p-2 overflow-auto"
+      className="  flex  flex-col 
+      p-2 overflow-auto w-1/2"
     >
-      <Library booksByShelf={readBooks} status={"R"}/>
+      <Library booksByShelf={currentlyReadingBooks} status={"C"} />
     </div>
   );
 }
 
-export default Read;
+export default CurrentlyReading;

@@ -2,16 +2,18 @@ import React, { useState, useEffect } from "react";
 import useAxios from "../utils/useAxios";
 import { debounce } from "lodash";
 import { useBooks } from "../context/booksContext";
+import { useSelector } from "react-redux";
 
 const AddBooksModal = ({ isOpen, setOpen }) => {
-  const { books } = useBooks();
+  const { books, setReadBooks, setCurrentlyReadingBooks, setToReadBooks } =
+    useBooks();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [selectedShelf, setSelectedShelf] = useState("");
   const [status, setStatus] = useState("");
   const [newShelf, setNewShelf] = useState("");
-
+  const { user } = useSelector(state => state.auth);
   const api = useAxios();
 
   useEffect(() => {
@@ -31,7 +33,57 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
     }, 300);
     fetchResults();
   }, [query]);
-  console.log(selectedBooks);
+  const updateBooksState = (addedShelf, setState) => {
+    setState(prev =>
+      prev.some(item => item.shelf === addedShelf.shelf)
+        ? prev.map(item =>
+            item.shelf === addedShelf.shelf
+              ? { ...item, books: [...item.books, ...addedShelf.books] }
+              : item
+          )
+        : [...prev, addedShelf]
+    );
+  };
+  const addbooks = async () => {
+    if (selectedBooks.length === 0) alert("No books selected");
+    else if (!status) alert("Please select a status");
+    else {
+      try {
+        const shelf =
+          !selectedShelf && !newShelf
+            ? "New reads"
+            : newShelf
+            ? newShelf
+            : selectedShelf;
+        const response = await api.post("http://localhost:3002/api/book/add", {
+          userId: user.id,
+          books: selectedBooks,
+          status,
+          shelf,
+        });
+        const addedShelf = { shelf: shelf, books: response.data };
+        switch (status) {
+          case "R":
+            updateBooksState(addedShelf, setReadBooks);
+            break;
+          case "C":
+            updateBooksState(addedShelf, setCurrentlyReadingBooks);
+            break;
+          case "T":
+            updateBooksState(addedShelf, setToReadBooks);
+            break;
+          default:
+            break;
+        }
+      } catch (error) {
+        if (error.response.status === 400) {
+          alert(error?.response?.data?.error);
+        } else {
+          alert(`Error: ${error?.response?.statusText}`);
+        }
+      }
+    }
+  };
   if (!isOpen) return null;
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-0 flex items-center justify-center z-50">
@@ -39,8 +91,8 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
         className="flex flex-col bg-[#F6E4BE] rounded-lg border-2 border-black shadow-black-4 overflow-hidden"
         style={{ width: "500px", height: "550px" }}
       >
-        <div className="flex justify-between items-center flex-none p-4 border-b-2 border-black bg-[#A4D985] ">
-          <h2 className="text-lg font-bold ">Add Books i've read</h2>
+        <div className="flex justify-between items-center flex-none py-3 px-5 border-b-2 border-black bg-[#A4D985] ">
+          <h2 className="text-lg font-bold ">Add Books</h2>
 
           <button
             className="text-gray-500 hover:text-black border-2 border-black rounded-full size-7 flex justify-center items-center bg-white"
@@ -50,6 +102,7 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
               setSelectedBooks([]);
               setSelectedShelf("");
               setStatus("");
+              setNewShelf("");
             }}
           >
             <svg
@@ -67,7 +120,7 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
             </svg>
           </button>
         </div>
-        <div className="p-5 flex flex-col flex-grow overflow-auto">
+        <div className="p-5 flex flex-col flex-grow space-y-4 overflow-auto">
           <input
             className="outline-none bg-white flex rounded-xl h-10 shadow-black-2 border-black border-2 p-2 "
             type="text"
@@ -76,16 +129,24 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
             onChange={e => setQuery(e.target.value)}
           />
           {query && (
-            <div className=" w-full mt-4 bg-white shadow-lg overflow-y-auto h-72 scrollbar-none">
+            <div className=" w-full mb-10  bg-white shadow-lg overflow-y-auto  scrollbar-none">
               <ul>
                 {results.length > 0 ? (
                   results.map((result, index) => (
                     <li
                       key={index}
                       className="px-4 py-2 hover:bg-gray-200 cursor-pointer
-                       border-2 border-black h-20 flex "
+                      border-2 border-black h-20 flex "
                       onClick={() => {
-                        setSelectedBooks(prevState => [...prevState, result]);
+                        setSelectedBooks(prevState => {
+                          const bookExists = prevState.some(
+                            book => book.code === result.code
+                          );
+                          if (!bookExists) {
+                            return [...prevState, result];
+                          }
+                          return prevState;
+                        });
                         setQuery("");
                       }}
                     >
@@ -113,7 +174,7 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
             </div>
           )}
           {!query && selectedBooks.length > 0 && (
-            <div className="flex flex-wrap mt-5 h-52 w-full overflow-y-auto bg-red-400 ">
+            <div className="flex flex-wrap mt-5 h-36 w-full overflow-y-auto ">
               {selectedBooks.map(b => (
                 <div
                   key={b._id}
@@ -139,87 +200,87 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
               ))}
             </div>
           )}
-          {selectedBooks.length > 0 && (
+          {selectedBooks.length > 0 && !query && (
             <>
-              <div className="flex space-x-3">
-                <div className="flex flex-col w-full">
-                  <label
-                    htmlFor="status"
-                    className=" text-sm font-medium text-gray-700"
-                  >
-                    Select a status :
-                  </label>
-                  <select
-                    id="status"
-                    value={status}
-                    onChange={event => {
-                      setStatus(event.target.value);
-                    }}
-                    className="flex bg-[#FDA79A] rounded-lg px-1 border-2
-           border-[#3D3D3D] shadow-grey-2 outline-none w-full"
-                  >
-                    <option value="" disabled>
-                      Status
-                    </option>
-                    <option value="R">Read</option>
-                    <option value="C">Currently reading</option>
-                    <option value="T">To read</option>
-                  </select>
-                </div>
-                {status && (
-                  <div className="flex flex-col w-full">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Select a shelf :
-                    </label>
-                    <select
-                      value={selectedShelf}
-                      onChange={event => {
-                        setSelectedShelf(event.target.value);
-                      }}
-                      className="flex w-full bg-[#FDA79A] rounded-lg pr-1 pl-1 border-2
-           border-[#3D3D3D] shadow-grey-2 outline-none"
-                    >
-                      <option value="" disabled>
-                        Shelf
-                      </option>
-                      {books
-                        .find(s => s.status === status)
-                        ?.shelves?.map(b => b.shelf)
-                        ?.map(shelf => (
-                          <option key={shelf} value={shelf}>
-                            {shelf}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                )}
+              <div className="flex flex-col w-full">
+                <label
+                  htmlFor="status"
+                  className=" text-sm font-medium text-gray-700"
+                >
+                  Select a status
+                </label>
+                <select
+                  id="status"
+                  value={status}
+                  onChange={event => {
+                    setStatus(event.target.value);
+                  }}
+                  className="flex h-7 bg-[#FFD787] rounded-lg px-1 border-2
+                     border-[#3D3D3D] shadow-grey-2 outline-none w-full"
+                >
+                  <option value="" disabled>
+                    Status
+                  </option>
+                  <option value="R">Read</option>
+                  <option value="C">Currently reading</option>
+                  <option value="T">To read</option>
+                </select>
               </div>
+
               {status && (
-                <div>
+                <div className="flex flex-col space-y-3">
+                  <div className="flex space-x-3 items-center">
+                    <div className="flex flex-col w-full  ">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Assign to a shelf
+                      </label>
+                      <select
+                        value={selectedShelf}
+                        onChange={event => {
+                          setSelectedShelf(event.target.value);
+                        }}
+                        className="flex w-full h-7 bg-[#FDA79A] rounded-lg pr-1 pl-1 border-2
+                      border-[#3D3D3D] shadow-grey-2 outline-none"
+                      >
+                        <option value="">Shelf</option>
+                        {books
+                          .find(s => s.status === status)
+                          ?.shelves?.map(b => b.shelf)
+                          ?.map(shelf => (
+                            <option key={shelf} value={shelf}>
+                              {shelf}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col w-full ">
+                      <label className=" text-sm font-medium text-gray-700">
+                        Create a new shelf
+                      </label>
+                      <input
+                        className="outline-none bg-white flex rounded-lg  shadow-black-2 border-black border-2 px-2  "
+                        type="text"
+                        value={newShelf}
+                        onChange={e => setNewShelf(e.target.value)}
+                      />
+                    </div>
+                  </div>
                   <p>
                     By default, the selected book(s) will be assigned to the
-                    shelf "new reads". Yous can create a new shelf otherwise
+                    shelf "New Reads." You can create a new shelf if you prefer.
                   </p>
-                  <div className="flex">
-                    <label className=" text-sm font-medium text-gray-700">
-                      Create a new shelf
-                    </label>
-                    <input
-                      type="text"
-                      value={newShelf}
-                      onChange={e => setNewShelf(e.target.value)}
-                    />
-                  </div>
                 </div>
               )}
             </>
           )}
         </div>
 
-        <div className="flex flex-none justify-end items-center  p-4  bg-slate-300 ">
+        <div className="flex flex-none justify-end items-center p-5 ">
           <button
-            className=" h-10 text-black bg-white font-bold py-2 px-4 rounded-md border-2 border-black shadow-black-2  "
-            onClick={setOpen}
+            className=" h-10 text-black bg-white font-bold py-2 px-4 rounded-md border-2 border-black shadow-black-2
+            active:translate-y-0.5 active:translate-x-0.5 active:shadow-none transform transition duration-200"
+            onClick={addbooks}
           >
             Save
           </button>

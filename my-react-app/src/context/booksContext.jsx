@@ -22,11 +22,12 @@ export const BooksProvider = ({ children }) => {
     try {
       const response = await api.post(
         "http://localhost:3002/api/book/booksByShelf",
-        { userId: user.id, status: "R" }
+        { userId: user?.id, status: "R" }
       );
       console.log("res", response.data);
       setBooks(response.data);
       setReadBooks(response.data.find(r => r.status === "R")?.shelves || []);
+      console.log("readBooks", readBooks);
       setCurrentlyReadingBooks(
         response.data.find(r => r.status === "C")?.shelves || []
       );
@@ -37,8 +38,8 @@ export const BooksProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (user) fetchData();
+  }, [user]);
 
   return (
     <BooksContext.Provider

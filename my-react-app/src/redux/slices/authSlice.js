@@ -59,16 +59,21 @@ export const googleLogin = createAsyncThunk(
 
 export const logout = createAsyncThunk(
   "user/logout",
-  async (data, thunkAPI) => {
-    const { rejectWithValue } = thunkAPI;
+  async (_, { rejectWithValue }) => {
+    const api = axiosAuth();
+
     try {
-      const response = await axiosAuth.post(
-        "http://localhost:3001/api/auth/logout"
-      );
+      const response = await api.post("http://localhost:3001/api/auth/logout");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       return response.data;
     } catch (error) {
+      console.error("Logout error:", error);
+      if (!error.response) {
+        return rejectWithValue({
+          message: "Network error or server is not responding",
+        });
+      }
       return rejectWithValue(error.response.data);
     }
   }
@@ -97,7 +102,11 @@ export const signup = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    clearUser: state => {
+      state.user = null;
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(localLogin.pending, state => {
@@ -144,5 +153,6 @@ const authSlice = createSlice({
       });
   },
 });
+export const { clearUser } = authSlice.actions;
 
 export default authSlice.reducer;

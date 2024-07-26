@@ -42,6 +42,8 @@ export default {
           2: "#F2E1D0",
         },
         beige: "#FFEAB9",
+        white: "#FEF9EF",
+        grey: "#3D3D3D",
       },
     },
   },

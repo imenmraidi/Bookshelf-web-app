@@ -42,17 +42,24 @@ const getBooks = async (req, res) => {
     res.status(500).send({ error });
   }
 };
-const addBook = async (req, res) => {
-  const { book, shelf, status, userId } = req.body;
+const addBooks = async (req, res) => {
+  const { books, shelf, status, userId } = req.body;
   try {
-    const existingBook = await Book.findOne({ code: book.code });
-    if (existingBook) {
-      return res.status(400).json({ error: "Book already exists" });
-    }
-    const newBook = new Book({ ...book, shelf, status, userId });
-    await newBook.save();
+    const existingBooks = await Book.find({
+      code: { $in: books.map(book => book.code) },
+    });
 
-    res.status(200).json(newBook);
+    if (existingBooks.length > 0) {
+      const existingTitles = existingBooks.map(book => book.title);
+      return res.status(400).json({
+        error: `Books with titles "${existingTitles.join(", ")}" already exist`,
+      });
+    }
+
+    const newBooks = books.map(book => ({ ...book, shelf, status, userId }));
+    const insertedBooks = await Book.insertMany(newBooks);
+
+    res.status(200).json(insertedBooks);
   } catch (error) {
     res.status(500).send({ error });
   }
@@ -64,12 +71,12 @@ const groupBooksByShelf = async (req, res) => {
         $group: {
           _id: {
             status: "$status",
-            shelf: "$shelf"
+            shelf: "$shelf",
           },
           books: {
-            $push: "$$ROOT"
-          }
-        }
+            $push: "$$ROOT",
+          },
+        },
       },
       {
         $group: {
@@ -77,18 +84,18 @@ const groupBooksByShelf = async (req, res) => {
           shelves: {
             $push: {
               shelf: "$_id.shelf",
-              books: "$books"
-            }
-          }
-        }
+              books: "$books",
+            },
+          },
+        },
       },
       {
         $project: {
           _id: 0,
           status: "$_id",
-          shelves: 1
-        }
-      }
+          shelves: 1,
+        },
+      },
     ]);
 
     res.status(200).json(groupedBooks);
@@ -108,7 +115,7 @@ const deleteBook = async (req, res) => {
 
 module.exports = {
   searchBook,
-  addBook,
+  addBooks,
   groupBooksByShelf,
   deleteBook,
   getBooks,

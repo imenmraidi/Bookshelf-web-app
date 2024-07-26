@@ -8,7 +8,7 @@ const Controller = require("../controllers/bookController");
 
 router.get("/search/:search", Controller.searchBook);
 router.get("/get/:userId", Controller.getBooks);
-router.post("/add", Controller.addBook);
+router.post("/add", Controller.addBooks);
 router.post("/delete", Controller.deleteBook);
 router.post("/booksByShelf", auth, Controller.groupBooksByShelf);
 
