@@ -13,13 +13,13 @@ function MiniTopBar({
         status === "C" ? "center" : "between"
       } px-5 w-full`}
     >
-      <h1 className="flex  items-center text-3xl italic">
+      <h3 className="flex  items-center text-2xl font italic">
         {status === "R"
           ? "My readings"
           : status === "C"
           ? "Currently reading"
           : "To read list"}
-      </h1>
+      </h3>
       {status !== "C" && (
         <div className="flex space-x-3">
           <div

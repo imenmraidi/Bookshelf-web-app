@@ -7,7 +7,7 @@ import AddBooksModal from "../comm/AddBooksModal";
 import { useBooks } from "../context/booksContext";
 function CurrentlyReading() {
   const { currentlyReadingBooks } = useBooks();
-
+  console.log("currentlyReadingBooks", currentlyReadingBooks);
   return (
     <div
       className="  flex  flex-col 

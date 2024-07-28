@@ -106,7 +106,7 @@ const groupBooksByShelf = async (req, res) => {
 const deleteBook = async (req, res) => {
   const { bookId } = req.body;
   try {
-    await Book.findOneAndDelete({ bookId });
+    await Book.findOneAndDelete({ _id: bookId });
     res.status(200);
   } catch (error) {
     res.status(500).send({ error });

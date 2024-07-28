@@ -51,7 +51,9 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
       try {
         const shelf =
           !selectedShelf && !newShelf
-            ? "New reads"
+            ? status === "C"
+              ? ""
+              : "New reads"
             : newShelf
             ? newShelf
             : selectedShelf;
@@ -181,7 +183,7 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
                   className="flex relative m-2 h-28 w-20 rounded-md border-2 border-black shadow-black-2 overflow-hidden "
                 >
                   <button
-                    className="absolute right-1 top-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center
+                    className="absolute right-1 top-1 size-6 bg-red-500 text-white rounded-full flex items-center justify-center
                      text-lg border border-black shadow-black-1 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transform transition duration-200"
                     onClick={() =>
                       setSelectedBooks(prev =>
@@ -227,7 +229,7 @@ const AddBooksModal = ({ isOpen, setOpen }) => {
                 </select>
               </div>
 
-              {status && (
+              {status && status !== "C" && (
                 <div className="flex flex-col space-y-3">
                   <div className="flex space-x-3 items-center">
                     <div className="flex flex-col w-full  ">
